@@ -1,0 +1,17 @@
+const { validateschema } = require('../middleware/validation');
+const { validatesignup, validatesignin, validateconfirm, validateupdatepassword, validateforget } = require('../detailRouter/user/user.validation');
+const { signup, signin, confirmemail, updatePassword, updatePicture, sendcode, forgetPassword, alluser, Qrcode } = require("../detailRouter/user/user.service");
+const { auth } = require('../middleware/auth');
+const { endpoint } = require('../detailRouter/user/user.endpoint');
+const { myMulter, fileValdation } = require('../service/multer');
+const router = require('express').Router();
+router.post('/signup', validateschema(validatesignup), signup);
+router.get('/confirmEmail/:token', validateschema(validateconfirm), confirmemail);
+router.post('/signin', validateschema(validatesignin), signin);
+router.patch('/updatepassword', auth(endpoint.updatepassword), validateschema(validateupdatepassword), updatePassword);
+router.patch('/updatePicture', auth(endpoint.updatePicturepro), myMulter('/profile', fileValdation.image).single("image"), updatePicture);
+router.patch('/sendcode', auth(endpoint.updatePicturepro), sendcode);
+router.patch('/forgetPassword', validateschema(validateforget), forgetPassword);
+router.get('/getalluser', alluser);
+router.get('/qrcode/:id', Qrcode);
+module.exports = router;
